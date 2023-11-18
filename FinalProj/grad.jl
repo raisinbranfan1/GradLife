@@ -105,4 +105,13 @@ end
 # 5 - Eat 
 # 6 - Break 
 # 7 - Do PSet
-# 8 - Do nothing (redeems end reward at time 99 and transitions to state 0)
+# 8 - Do nothing (redeems end reward at time 99 and transitions to time 0)
+
+
+# Short nap: + 2 energy, + 2 focus, + 1 hr
+# Medium nap: + 4 energy, + 4 focus, + 2 hrs
+# Long nap (basically full sleep) – full energy, full focus, + 8 hrs
+# Studying: + 1 knowledge, - 3 energy, - 5 focus, + 2 hrs
+# Eating: +5 energy, - 1 focus, + 1 hrs
+# Mental/social break: + 5 focus, - 1 energy, + 1 hrs
+# Do Pset: + Pset dependent on knowledge, - 4 energy, - 6 focus, + 3 hrs

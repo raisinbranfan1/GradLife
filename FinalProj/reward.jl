@@ -10,7 +10,7 @@ function R(s,a)
         T_s = Digit_s[5]
     end
     R = 0
-    final_r = F_s*E_s*K_s*P_s^2
+    final_r = (F_s+1)*(E_s+1)*(K_s+1)+(P_s+1)^3
     if a == 1
     elseif a == 2
         if T_s > 97
@@ -46,6 +46,9 @@ function R(s,a)
         if T_s == 99
             R = final_r
         end
+    end
+    if T_s == 99 && a != 8
+        R = -100
     end
     return R
 end
