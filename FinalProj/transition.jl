@@ -4,14 +4,14 @@ function T(s,a)
         return s′
     end
     Digit_s = digits(s)
-    F_s = Digit_s[1]
-    E_s = Digit_s[2]
-    K_s = Digit_s[3]
-    P_s = Digit_s[4]
+    F_s = Digit_s[1] # Focus
+    E_s = Digit_s[2] # Energy
+    K_s = Digit_s[3] # Knowledge
+    P_s = Digit_s[4] # PSet percentage
     if length(Digit_s) == 6
         T_s = 10*Digit_s[6] + Digit_s[5]
     else
-        T_s = Digit_s[5]
+        T_s = Digit_s[5] # Time
     end
     if a == 1
         f = rand()
@@ -98,6 +98,9 @@ function T(s,a)
         end
         if E_s < 0
             E_s = 0
+        end
+        if K_s > 9
+            K_s = 9
         end
         T_s += 2
         if T_s > 99

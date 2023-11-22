@@ -1,16 +1,25 @@
 function R(s,a)
     Digit_s = digits(s)
-    F_s = Digit_s[1]
-    E_s = Digit_s[2]
-    K_s = Digit_s[3]
-    P_s = Digit_s[4]
-    if length(Digit_s) == 6
-        T_s = 10*Digit_s[6] + Digit_s[5]
+    if length(Digit_s) < 2
+        T_s = 0
+        F_s = 0
+        E_s = 0
+        K_s = 0
+        P_s = 0
     else
-        T_s = Digit_s[5]
+        F_s = Digit_s[1]
+        E_s = Digit_s[2]
+        K_s = Digit_s[3]
+        P_s = Digit_s[4]
+        if length(Digit_s) == 6
+            T_s = 10*Digit_s[6] + Digit_s[5]
+        else
+            T_s = Digit_s[5]
+        end
     end
     R = 0
     final_r = (F_s+1)*(E_s+1)*(K_s+1)+(P_s+1)^3
+    #final_r = (F_s+1)+(E_s+1)+(K_s+1)+(P_s+1)
     if a == 1
     elseif a == 2
         if T_s > 97

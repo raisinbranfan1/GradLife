@@ -19,6 +19,9 @@ mutable struct EpsilonGreedyExploration
     ϵ
 end
 
+mutable struct Cust
+end
+
 struct MDP
     γ # discount factor
     S # state space
@@ -34,11 +37,60 @@ mutable struct QLearning
     α
 end
 
-lookahead(model::QLearning, s, a) = model.Q[s,a]
+mutable struct Sarsa
+    S
+    A
+    γ
+    Q
+    α
+    ℓ
+end
+
+mutable struct SarsaLambda
+    S
+    A
+    γ
+    Q
+    N
+    α
+    λ
+    ℓ
+end
+
+lookahead(model::QLearning, s, a) = model.Q[s+1,a]
+lookahead(model::Sarsa, s, a) = model.Q[s+1,a]
+lookahead(model::SarsaLambda, s, a) = model.Q[s+1,a]
 
 function update!(model::QLearning, s, a, r, s′)
     γ, Q, α = model.γ, model.Q, model.α
-    Q[s,a] += α*(r + γ*maximum(Q[s′, :]) - Q[s,a])
+    Q[s + 1,a] += α*(r + γ*maximum(Q[s′ + 1, :]) - Q[s + 1,a])
+    return model
+end
+
+function update!(model::Sarsa, s, a, r, s′)
+    if model.ℓ != nothing
+        γ, Q, α, ℓ = model.γ, model.Q, model.α, model.ℓ
+        model.Q[ℓ.s + 1, ℓ.a] += α*(ℓ.r + γ*Q[s+1,a] - Q[ℓ.s+1, ℓ.a])
+    end
+    model.ℓ = (s=s, a=a, r=r)
+    return model
+end
+
+function update!(model::SarsaLambda, s, a, r, s′)
+    if model.ℓ != nothing
+        γ, λ, Q, α, ℓ = model.γ, model.λ, model.Q, model.α, model.ℓ
+        model.N[ℓ.s + 1, ℓ.a] += 1
+        δ = ℓ.r + γ*Q[s+1, a] - Q[ℓ.s + 1, ℓ.a]
+        for s in model.S
+            for a in model.A
+                model.Q[s+1,a] += α*δ*model.N[s+1,a]
+                model.N[s+1,a] *= γ*λ
+            end
+        end
+    else
+        model.N[:,:] .= 0.0
+    end
+    model.ℓ = (s=s, a=a, r=r)
     return model
 end
 
@@ -54,49 +106,74 @@ end
 function simulate(P::MDP, model, π, h, s)
     for i in 1:h
         a = π(model, s)
+        #print("state: ",s, ", action: ", a, "\n")
         s′, r = P.TR(s,a)
+        N[s + 1, a] += 1
         update!(model, s, a, r, s′)
         s = s′
     end
 end
 
-# tick()
-# γ = 1
-# S = collect(0:1:999999)
-# A = collect(1:1:7)
-# P = MDP(γ, S, A, TR)
-# k = 20000
-# ϵ = 0.1
-# s = 10055
-# α = 0.2
-# Q = zeros(length(P.S), length(P.A))
-# π = EpsilonGreedyExploration(ϵ)
-# model = QLearning(P.S, P.A, P.γ, Q, α)
-# simulate(P, model, π, k, s)
-# policy = rand(1:7,1000000,1)
-# for i in 0:999999
-#     policy[i] = argmax(a->Q[i,a], A)
-# end
-# io = open("grad.policy", "w") do io
-#     for x in policy
-#         println(io, x)
-#     end
-# end
-# tock()
-
-policy = rand(1:7,1000000,1)
-s = 10055
-Reward = 0
-while s != 0
-    a = policy[s + 1]
-    if s >= 990000
-        a = 8
-    end
-    s_new,r = TR(s, a)
-    global Reward += r
-    print("State: ", s, " Action taken: ", a, " Reward total: ", Reward, "\n")
-    global s = s_new
+tick()
+γ = 1
+S = collect(0:1:999999)
+A = collect(1:1:8)
+P = MDP(γ, S, A, TR)
+k = 100
+ϵ = 0.5
+α = 0.2
+Q = zeros(length(P.S), length(P.A))
+N = zeros(length(P.S), length(P.A))
+λ = 0.5
+ℓ = nothing
+model = "Sarsa"
+if model == "QLearning"
+    model = QLearning(P.S, P.A, P.γ, Q, α)
+elseif model == "Sarsa"
+    model = Sarsa(P.S, P.A, P.γ, Q, α, ℓ)
+elseif model = "SarsaLambda"
+    model = SarsaLambda(P.S, P.A, P.γ, Q, N, α, λ, ℓ)
 end
+
+rollouts = 10000000
+for r in 1:rollouts
+    E_rand = rand(1:9)
+    F_rand = rand(1:9)
+    s = 10000 + E_rand*10 + F_rand
+    π = EpsilonGreedyExploration(ϵ)
+    simulate(P, model, π, k, s)
+    println("Rollout # ", r)
+end
+policy = rand(1:8,1000000,1)
+action_value = zeros(1000000)
+for i in 1:1000000
+    policy[i] = argmax(a->Q[i,a], A)
+    action_value[i] = Q[i,policy[i]]
+end
+
+# DEBUG
+# m = maximum(action_value)
+# println(m)
+# function myCondition(y)
+#     return m == y
+# end
+# f = findfirst(myCondition, action_value)
+# println(f)
+# println(argmax(a->Q[f,a], A))
+println("Unique Q: ",length(unique(action_value)))
+
+io = open("grad.policy", "w") do io
+    for x in policy
+        println(io, x)
+    end
+end
+io = open("grad.Q", "w") do io
+    for x in action_value
+        println(io, x)
+    end
+end
+tock()
+
 
 # 1 - Short nap
 # 2 - Medium nap
