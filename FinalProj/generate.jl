@@ -37,7 +37,9 @@ function TR(s,a)
     return s′, r
 end
 
-policy = CSV.read("grad.policy", DataFrame, header = 0)
+policy_file = "./SavedRuns/grad.policy1e8Sarsa"
+
+policy = CSV.read(policy_file, DataFrame, header = 0)
 E_rand = rand(1:9)
 F_rand = rand(1:9)
 s = 10000 + E_rand*10 + F_rand

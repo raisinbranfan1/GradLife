@@ -23,33 +23,33 @@ function R(s,a)
     if a == 1
     elseif a == 2
         if T_s > 97
-            R = -50
+            R = -5000
         end
     elseif a == 3
         if T_s > 91
-            R = -50
+            R = -5000
         end
     elseif a == 4
         if T_s > 97
-            R = -50
+            R = -5000
         end
         if E_s < 3 || F_s < 5
-            R = -100
+            R = -1000
         end
     elseif a == 5
         if F_s < 1
-            R = -100
+            R = -1000
         end
     elseif a == 6
         if E_s < 1
-            R = -100
+            R = -1000
         end
     elseif a == 7
         if T_s > 96
-            R = -50
+            R = -5000
         end
-        if E_s < 4 || F_s < 6
-            R = -100
+        if E_s < 5 || F_s < 7
+            R = -1000
         end
     elseif a == 8
         if T_s == 99
@@ -57,7 +57,10 @@ function R(s,a)
         end
     end
     if T_s == 99 && a != 8
-        R = -100
+        R = -1000
+    end
+    if T_s != 99 && a == 8
+        R = -1000
     end
     return R
 end

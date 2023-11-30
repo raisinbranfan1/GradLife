@@ -24,11 +24,11 @@ function T(s,a)
             F_s += 2
         end
         if e < 0.15
-            E_s += 1
+            E_s += 0
         elseif e > 0.85
-            E_s += 3
-        else
             E_s += 2
+        else
+            E_s += 1
         end
         if F_s > 9
             F_s = 9
@@ -44,18 +44,18 @@ function T(s,a)
         f = rand()
         e = rand()
         if f < 0.15
-            F_s += 3
+            F_s += 2
         elseif f > 0.85
-            F_s += 5
-        else
             F_s += 4
+        else
+            F_s += 3
         end
         if e < 0.15
-            E_s += 3
+            E_s += 1
         elseif e > 0.85
-            E_s += 5
+            E_s += 3
         else
-            E_s += 4
+            E_s += 2
         end
         if F_s > 9
             F_s = 9
@@ -86,11 +86,11 @@ function T(s,a)
             F_s -= 5
         end
         if e < 0.15
-            E_s -= 2
-        elseif e > 0.85
-            E_s -= 4
-        else
             E_s -= 3
+        elseif e > 0.85
+            E_s -= 5
+        else
+            E_s -= 4
         end
         K_s += 1
         if F_s < 0
@@ -115,11 +115,11 @@ function T(s,a)
             F_s -= 1
         end
         if e < 0.15
-            E_s += 4
+            E_s += 2
         elseif e > 0.85
-            E_s += 6
+            E_s += 4
         else
-            E_s += 5
+            E_s += 3
         end
         if F_s < 0
             F_s = 0
@@ -160,7 +160,7 @@ function T(s,a)
         f = rand()
         e = rand()
         k = rand()
-        if K_s > 7
+        if K_s > 9
             if k < 0.15
                 P_s += 2
             elseif f > 0.85
@@ -168,7 +168,7 @@ function T(s,a)
             else
                 P_s += 3
             end
-        elseif K_s > 4
+        elseif K_s > 6
             if k < 0.15
                 P_s += 1
             elseif f > 0.85
@@ -186,18 +186,18 @@ function T(s,a)
             end
         end
         if e < 0.15
-            E_s -= 3
-        elseif f > 0.85
-            E_s -= 5
-        else
             E_s -= 4
+        elseif f > 0.85
+            E_s -= 6
+        else
+            E_s -= 5
         end
         if f < 0.15
-            F_s -= 4
-        elseif f > 0.85
-            F_s -= 5
-        else
             F_s -= 6
+        elseif f > 0.85
+            F_s -= 8
+        else
+            F_s -= 7
         end
         if E_s < 0
             E_s = 0

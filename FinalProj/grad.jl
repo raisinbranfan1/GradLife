@@ -131,24 +131,33 @@ if model == "QLearning"
     model = QLearning(P.S, P.A, P.γ, Q, α)
 elseif model == "Sarsa"
     model = Sarsa(P.S, P.A, P.γ, Q, α, ℓ)
-elseif model = "SarsaLambda"
+elseif model == "SarsaLambda"
     model = SarsaLambda(P.S, P.A, P.γ, Q, N, α, λ, ℓ)
 end
 
-rollouts = 10000000
-for r in 1:rollouts
-    E_rand = rand(1:9)
-    F_rand = rand(1:9)
-    s = 10000 + E_rand*10 + F_rand
-    π = EpsilonGreedyExploration(ϵ)
-    simulate(P, model, π, k, s)
-    println("Rollout # ", r)
+if model != "Random"
+    rollouts = 100000000
+    for r in 1:rollouts
+        E_rand = rand(1:9)
+        F_rand = rand(1:9)
+        s = 10000 + E_rand*10 + F_rand
+        π = EpsilonGreedyExploration(ϵ)
+        simulate(P, model, π, k, s)
+        println("Rollout # ", r)
+    end
 end
 policy = rand(1:8,1000000,1)
 action_value = zeros(1000000)
-for i in 1:1000000
-    policy[i] = argmax(a->Q[i,a], A)
-    action_value[i] = Q[i,policy[i]]
+if model != "Random"
+    for i in 1:1000000
+        policy[i] = argmax(a->Q[i,a], A)
+        action_value[i] = Q[i,policy[i]]
+    end
+else
+    for i in 1:1000000
+        action_value[i] = Q[i,policy[i]]
+        policy[990000:end] .= 8
+    end
 end
 
 # DEBUG
@@ -185,10 +194,10 @@ tock()
 # 8 - Do nothing (redeems end reward at time 99 and transitions to time 0)
 
 
-# Short nap: + 2 energy, + 2 focus, + 1 hr
-# Medium nap: + 4 energy, + 4 focus, + 2 hrs
+# Short nap: + 1 energy, + 2 focus, + 1 hr
+# Medium nap: + 2 energy, + 3 focus, + 2 hrs
 # Long nap (basically full sleep) – full energy, full focus, + 8 hrs
-# Studying: + 1 knowledge, - 3 energy, - 5 focus, + 2 hrs
-# Eating: +5 energy, - 1 focus, + 1 hrs
-# Mental/social break: + 5 focus, - 1 energy, + 1 hrs
-# Do Pset: + Pset dependent on knowledge, - 4 energy, - 6 focus, + 3 hrs
+# Studying: + 1 knowledge, - 4 energy, - 5 focus, + 2 hrs
+# Eating: +3 energy, - 1 focus, + 1 hrs
+# Mental/social break: + 4 focus, - 1 energy, + 1 hrs
+# Do Pset: + Pset dependent on knowledge, - 5 energy, - 8 focus, + 3 hrs
