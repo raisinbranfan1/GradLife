@@ -1,17 +1,17 @@
 # GradLife
-Optimization of Graduate Student Academic Performance
+Optimization of Graduate Student Academic Performance in a Week
 
 # Scripts
 transition.jl - returns a sampled probablistic transition from a given state and action
 
 reward.jl - returns a sampled reward from a given state and action
 
-grad.jl - trains a model-free policy on chosen hyperparameters
+grad.jl - trains a model-free policy with chosen hyperparameters
 Implemented options: Q-Learning, Sarsa, SarsaLambda, Random
 
 generate.jl - generate a single run of the student week given a chosen policy
 
-stats.jl - returns the average cumulative reward from running a chosen policy for a number of times
+stats.jl - returns the average cumulative reward from running a chosen policy for a number of simulations
 
 # Training files
 grad.Q - stores the state-action values of the current model being trained
